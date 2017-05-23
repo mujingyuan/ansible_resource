@@ -1,0 +1,69 @@
+---
+- hosts: "{{ targets }}"
+  vars:
+    tomcat_version: 7.0.73
+  roles:
+    - role: eju.java
+    - role: eju.tomcat
+      tomcat_instances:
+        - name: "{{ module_name }}"
+          service_name: "tomcat@{{ module_name }}"
+          server_elements:
+            shutdown_port: 30065
+            resource:
+            executors:
+            connectors:
+              element_1:
+                port: 30060
+                protocol: org.apache.coyote.http11.Http11NioProtocol
+                connectionTimeout: 20000
+                maxThreads: 1000
+                minSpareThreads: 25
+                maxSpareThreads: 75
+                enableLookups: false
+                URIEncoding: UTF-8
+                acceptCount: 1000
+                server: Fangjs App Srv 1.0
+                redirectPort: 8443
+          context_elements:
+            Resource:
+              element_1:
+                name: jdbc/aurum-db
+                auth: Container
+                type: javax.sql.DataSource
+                driverClassName: oracle.jdbc.OracleDriver
+                url: jdbc:oracle:thin:@//10.106.143.1:1521/fjsdb
+                username: aurumuser
+                password: NWQ4N2UwZGFmZjU5
+                initialSize: 20
+                maxActive: 50
+                maxIdle: 20
+                minIdle: 20
+                validationQuery: select 1 from dual
+                testOnBorrow: true
+                testOnReturn: true
+                testWhileIdle: true
+                timeBetweenEvictionRunsMillis: 600000
+                numTestsPerEvictionRun: 10
+                minEvictableIdleTimeMillis: 21600000
+                maxWait: 900
+              element_2:
+                name: jdbc/aurum-db-reader
+                auth: Container
+                type: javax.sql.DataSource
+                driverClassName: oracle.jdbc.OracleDriver
+                url: jdbc:oracle:thin:@//10.106.143.1:1521/fjsdb
+                username: aurumuser
+                password: NWQ4N2UwZGFmZjU5
+                initialSize: 20
+                maxActive: 50
+                maxIdle: 20
+                minIdle: 20
+                validationQuery: select 1 from dual
+                testOnBorrow: true
+                testOnReturn: true
+                testWhileIdle: true
+                timeBetweenEvictionRunsMillis: 600000
+                numTestsPerEvictionRun: 10
+                minEvictableIdleTimeMillis: 21600000
+                maxWait: 900

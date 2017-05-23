@@ -1,0 +1,11 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. OFFLINE HOST
+    file:
+      path: /tmp/offline
+      group: admin
+      owner: admin
+      state: directory 
+

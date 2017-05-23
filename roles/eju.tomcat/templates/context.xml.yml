@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+# This file is rendered by Ansible.
+-->
+
+<Context>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    {% if item.context_elements -%}
+    {% for element_type, elements in item.context_elements.iteritems() -%}
+    {% for element, params in elements.iteritems() -%}
+    <{{ element_type }}
+    {% for k, v in params.iteritems() %}
+    {{ k }}="{{ v }}"
+    {% endfor -%}
+    />
+    {% endfor -%}
+    {%- endfor -%}
+    {%- endif -%}
+</Context>

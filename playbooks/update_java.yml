@@ -1,0 +1,18 @@
+---
+- hosts: "{{ module_name }}"
+  gather_facts: False
+  tasks:
+  - name: UPDATE VERSION
+    synchronize: 
+      src: "{{item.src}}" 
+      dest: "{{item.dest}}" 
+      use_ssh_args: yes
+      delete: yes
+    with_items:
+      - {src: "/home/admin/ansible/data/jpol/{{ module_name }}/{{ module_name }}.war", dest: "/opt/tomcat/{{ module_name }}/webapps/{{ module_name }}.war"}
+  - name: RESTART SERVICE 
+    become: yes
+    service:  
+      name: "tomcat@{{ module_name }}"
+      state: restarted 
+

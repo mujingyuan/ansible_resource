@@ -1,0 +1,78 @@
+---
+- hosts: "{{ module_name }}"
+  roles:
+    - role: eju.java
+    - role: eju.tomcat
+      deploy_module:
+        name: "{{ module_name }}"
+        server_elements:
+          port_shutdown: 10021
+          port_connector: 8121
+          port_redirect: 8521
+          port_ajp: 8221
+        context_elements:
+          Resource:
+            element_1:
+              name: jms/jmsConnectionFactory
+              auth: Container
+              type: org.apache.activemq.ActiveMQConnectionFactory
+              description: JMS Connection Factory
+              factory: org.apache.activemq.jndi.JNDIReferenceFactory
+              brokerURL: failover:(tcp://1.1.1.1:61616?soTimeout=2000)?jms.useAsyncSend=true
+              username: 
+              password:
+            element_2:
+              name: jms/queue/jmsproxy_basefacade
+              auth: Container
+              type: org.apache.activemq.command.ActiveMQQueue
+              description: My Queue
+              factory: org.apache.activemq.jndi.JNDIReferenceFactory
+              physicalName: jmsproxy_basefacade
+            element_3:
+              name: jms/queue/jmsproxy_basefacade
+              auth: Container
+              type: org.apache.activemq.command.ActiveMQQueue
+              description: My Queue
+              factory: org.apache.activemq.jndi.JNDIReferenceFactory
+              physicalName: jmsproxy_basefacade
+            element_4:
+              name: jms/queue/jmsproxy_msgFacade
+              auth: Container
+              type: org.apache.activemq.command.ActiveMQQueue
+              description: My Queue
+              factory: org.apache.activemq.jndi.JNDIReferenceFactory
+              physicalName: jmsproxy_msgFacade
+            element_5:
+              name: jdbc/ds_gateway
+              auth: Container
+              type: javax.sql.DataSource
+              driverClassName: oracle.jdbc.OracleDriver
+              url: jdbc:oracle:thin:@//1.1.1.1:1521/tradedb
+              username:
+              password:
+              initialSize: 20
+              maxActive: 2000
+              maxIdle: 20
+              minIdle: 20
+              validationQuery: select 1 from dual
+              testOnBorrow: true
+              testOnReturn: true
+              testWhileIdle: true
+              timeBetweenEvictionRunsMillis: 600000
+              numTestsPerEvictionRun: 10
+              minEvictableIdleTimeMillis: 21600000
+              maxWait: 900
+  tasks:
+    - name: INSTALL SPECIAL FILES
+      synchronize:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        use_ssh_args: yes
+        delete: yes
+      with_items:
+        - {src: "/home/admin/project_data/{{ project }}/{{ module_name }}/lib/", dest: "/opt/tomcat/{{ module_name }}/lib/"}
+    - name: RESTART
+      become: true
+      service:
+        state: restarted
+        name: "tomcat@{{ module_name }}"

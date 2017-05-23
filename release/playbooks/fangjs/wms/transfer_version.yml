@@ -1,0 +1,19 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. MAKE DIR
+    file:
+      path: /home/admin/publish/{{project}}/{{module}}/{{ item.sub_dir }}
+      group: admin
+      owner: admin
+      state: directory 
+    with_items:
+      - {sub_dir: "lastest"}
+  - name: 2. DOWNLOAD VERSION
+    get_url: 
+      url: "{{item.file_url}}" 
+      dest: "/home/admin/publish/{{project}}/{{module}}/lastest/{{item.file_name}}" 
+      checksum: "md5:{{item.md5}}"
+    with_items: "{{ file_list }}"
+

@@ -1,0 +1,20 @@
+---
+- hosts: "all"
+  gather_facts: False
+  user: admin
+  tasks:
+  - name: mkdir dir
+    file:
+      path: /home/admin/.ssh
+      mode: 0755
+      owner: admin
+      group: admin
+      state: directory
+  - name: cp key
+    copy: 
+      src: /home/admin/.ssh/jpol_test_rsa.pub
+      dest: /home/admin/.ssh/authorized_keys
+      owner: admin
+      group: admin
+      mode: 0644
+        

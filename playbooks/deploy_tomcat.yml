@@ -1,0 +1,6 @@
+---
+- hosts: "{{ targets }}"
+  roles:
+    - role: eju.java
+    - role: eju.tomcat
+      tomcat_instances: "{{ tomcat_instances }}"

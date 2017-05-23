@@ -1,0 +1,10 @@
+---
+- hosts: "{{ hosts }}"
+  remote_user: admin
+  vars:
+    redis_version: 3.2.8
+    redis_travis_ci: true
+    cluster_enabled: "yes"
+  roles:
+    - role: eju.redis
+      redis_port: 6379

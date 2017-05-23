@@ -1,0 +1,28 @@
+---
+- hosts: "planner-inrpc"
+  roles:
+    - role: eju.java
+    - role: eju.tomcat
+      deploy_module:
+        name: planner-inrpc
+        port_shutdown: 10101
+        port_connector: 8401
+        port_redirect: 8701
+        port_ajp: 8301
+        ip_db: 10.120.132.46
+        port_db: 1521
+        db_name: test_yml
+  tasks:
+    - name: INSTALL SPECIAL FILES
+      synchronize:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        use_ssh_args: yes
+        delete: yes
+      with_items:
+        - {src: "/home/admin/ansible/data/jpol/planner-inrpc/lib/", dest: "/opt/tomcat/planner-inrpc/lib/"}
+    - name: RESTART
+      become: true
+      service:
+        state: restarted
+        name: tomcat@planner-inrpc

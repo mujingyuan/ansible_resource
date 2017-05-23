@@ -1,0 +1,28 @@
+---
+- hosts: "{{ targets }}"
+  gather_facts: False
+  remote_user: admin
+  become: true
+  tasks:
+  - name: mkdir dir
+    file:
+      path: /home/admin/.ssh
+      mode: 0755
+      owner: admin
+      group: admin
+      state: directory
+  - name: add key
+    copy:
+      dest: /home/admin/.ssh/authorized_keys
+      src: "{{ ansible_resource_dir }}/data/common/keys/{{ project }}_{{ env }}.pub"
+      owner: admin
+      group: admin
+      mode: 0644
+  - name: Ensure /etc/sudoers.d directory is present
+    file: path=/etc/sudoers.d state=directory
+  - name: Ensure /etc/sudoers.d is scanned by sudo
+    action: lineinfile dest=/etc/sudoers regexp="#includedir\s+/etc/sudoers.d" line="#includedir /etc/sudoers.d"
+  - name: Add admin user to the sudoers
+    action: 'lineinfile dest=/etc/sudoers.d/admin state=present create=yes regexp="admin .*" line="admin ALL=(ALL) NOPASSWD: ALL"'
+  - name: Ensure /etc/sudoers.d/admin file has correct permissions
+    action: file path=/etc/sudoers.d/admin mode=0440 state=file owner=root group=root

@@ -1,0 +1,81 @@
+{% set shutdown_port = item.server_elements.shutdown_port  if item.server_elements.shutdown_port else 8005 -%}
+{% set resources = item.server_elements.resource  if item.server_elements.resource else {} -%}
+{% set executors = item.server_elements.executors if item.server_elements.executors else {} -%}
+{% set connectors = item.server_elements.connectors if item.server_elements.connectors else {} -%}
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+#
+# **** WARNING ****
+#
+# This file is created by Ansible.
+# You can modify this file, but notify me after that pls.
+#
+-->
+
+<Server port="{{ shutdown_port }}" shutdown="SHUTDOWN">
+
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+{% if tomcat_version_major|int < 8 %}
+  <Listener className="org.apache.catalina.core.JasperListener" />
+{% endif %}
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <GlobalNamingResources>
+    {% if resources -%}
+    {% for id, params in resources.iteritems() -%}
+    <Resource
+    {% for k, v in params.iteritems() %}
+              {{ k }}="{{ v }}"
+    {%- endfor %}
+    />
+    {% endfor %}
+    {% endif %}
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+    {% if executors -%}
+    <Executor
+    {%- for k, v in executors.iteritems() %}
+               {{ k }}="{{ v }}"
+    {%- endfor -%}
+    />
+    {% endif %}
+    {%- if connectors -%}
+    {% for id, params in connectors.iteritems() -%}
+    <Connector
+    {% for k, v in params.iteritems() %}
+               {{ k }}="{{ v }}"
+    {% endfor -%}
+    />
+    {% endfor -%}
+    {% else %}
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               URIEncoding="UTF-8"
+               redirectPort="8443"
+    />
+    {% endif %}
+    <Engine name="Catalina" defaultHost="localhost">
+
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"/>
+      </Realm>
+
+      <Host name="localhost"  appBase="webapps"
+      	    unpackWARs="true" autoDeploy="true">
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="access." suffix=".log"
+               pattern="%h %l %u %t %r %s %b" resolveHosts="false"/>
+      </Host>
+    </Engine>
+  </Service>
+</Server>

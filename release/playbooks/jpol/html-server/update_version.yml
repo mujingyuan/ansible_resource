@@ -1,0 +1,11 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. STOP SERVICE
+    shell: chdir=/opt/node/ source ./stop.sh
+  - name: 2. RUN UPDATE SCRIPT
+    script: '{{ ansible_resource_dir }}/scripts/{{project}}/{{module}}/update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
+  - name: 3. START SERVICE
+    shell: chdir=/opt/node source ./start.sh
+

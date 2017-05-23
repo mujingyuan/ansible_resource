@@ -1,0 +1,74 @@
+---
+
+- include_vars: "{{ansible_distribution}}.yml"
+
+- name: RedHat | Add source sources
+  become: yes
+  yum_repository:
+      name: mongodb-org-{{ mongodb_version }}
+      description: MongoDB Repository
+      baseurl: "{{ mongodb_repo_baseurl }}"
+      gpgcheck: "{{ mongodb_repo_gpgcheck }}"
+      gpgkey: "{{ mongodb_repo_gpgkey }}"
+
+
+- name: RedHat | Install dependencies packages
+  become: yes
+  yum: name={{ item }} state=installed update_cache=yes
+  with_items: "{{ mongodb_packages_dependencies | default([]) }}"
+  when: "{{ mongodb_packages_dependencies | default([]) }}"
+
+- name: RedHat | Install Packages
+  become: yes
+  yum: name={{ mongodb_package }} state=installed
+
+- name: Check if running on systemd
+  stat: path=/sbin/init
+  register: sbin_init
+  changed_when: false
+  check_mode: no
+
+- name: Establish some role-related facts
+  set_fact:
+    mongodb_is_systemd: "{{ sbin_init.stat.islnk is defined and sbin_init.stat.islnk }}"
+    mongodb_major_version: "{{ mongodb_version[0:3] }}"
+
+- name: Add systemd configuration if present
+  become: yes
+  template:
+    src: files/mongodb.service
+    dest: /lib/systemd/system/mongodb.service
+    owner: root
+    group: root
+    mode: 0640
+  when: mongodb_is_systemd
+
+- name: Add symlink for systemd
+  become: yes
+  file: src=/lib/systemd/system/mongodb.service dest=/etc/systemd/system/multi-user.target.wants/mongodb.service state=link
+  when: mongodb_is_systemd
+  notify: reload systemd
+
+- meta: flush_handlers
+  become: yes
+  when: mongodb_is_systemd
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  changed_when: false
+  when: mongodb_is_systemd
+
+- name: Install PyMongo package
+  yum: name=python-pymongo state=installed
+  when: not mongodb_pymongo_from_pip
+
+- name: Install PIP
+  yum: name={{ item }} state=installed
+  with_items:
+    - python2-pip
+  when: mongodb_pymongo_from_pip
+
+- name: Install PyMongo from PIP
+  pip: name=pymongo state=latest
+  when: mongodb_pymongo_from_pip
+

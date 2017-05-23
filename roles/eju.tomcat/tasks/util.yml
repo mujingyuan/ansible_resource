@@ -1,0 +1,10 @@
+- { include: ../../eju.util/tasks/_get.yml,
+      url: "{{ tomcat_download_url }}",
+      dest: "{{ util_persistent_data_path_local }}/{{ tomcat_filename }}",
+      sha1sum: "{{ tomcat_redis_sha1sum }}"
+  }
+
+- { include: ../../eju.util/tasks/_put.yml,
+      src: "{{ util_persistent_data_path_local }}/{{ tomcat_filename }}",
+      dest: "{{ util_persistent_data_path_remote }}/{{ tomcat_filename }}"
+  }

@@ -1,0 +1,29 @@
+---
+dependencies:
+  - name: eju.lib
+galaxy_info:
+  author: mujingyuan
+  description: Role for base configuration of Ansible roles developed at EJU.
+  company: EJU
+  license: Apache 2
+  min_ansible_version: 1.8
+  platforms:
+  - name: EL
+    versions:
+    - 6
+  - name: Fedora
+    versions:
+    - 20
+  - name: Ubuntu
+    versions:
+    - trusty
+  - name: Debian
+    versions:
+    - wheezy
+  - name: Archlinux
+    versions:
+    - all
+  categories:
+  - system
+
+

@@ -1,0 +1,7 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. RUN UPDATE SCRIPT
+    script: '{{ ansible_resource_dir }}/scripts/{{project}}/{{module}}/update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
+

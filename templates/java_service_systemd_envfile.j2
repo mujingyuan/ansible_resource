@@ -1,0 +1,7 @@
+CATALINA_BASE={{ item.path|default(tomcat_default_instance_path) }}/catalina/{{ item.name }}
+CATALINA_OPTS={{ item.catalina_opts|default(tomcat_default_catalina_opts) }}
+CATALINA_GC_OPTS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -XX:+PrintTenuringDistribution -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=68 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -verbose:gc -Xloggc:${LOG_PATH}/gc.log"
+CATALINA_NORMAL_OPTS="-server -Xss512k -Dsun.net.inetaddr.ttl=30 -Dapp.name=${APP_NAME} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${LOG_PATH} -XX:ErrorFile=${LOG_PATH}/hs_err_pid%p.log -Djava.security.egd=file:/dev/./urandom"
+CATALINA_MEM_OPTS="-Xmx1792m -Xms1792m -Xmn900m -XX:PermSize=256m -XX:MaxPermSize=256m"
+CATALINA_DEBUG_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${DEBUG_PORT}"
+CATALINA_OPTS="${CATALINA_NORMAL_OPTS} ${CATALINA_MEM_OPTS} ${CATALINA_GC_OPTS} ${CATALINA_DEBUG_OPTS}"

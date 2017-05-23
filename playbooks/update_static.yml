@@ -1,0 +1,20 @@
+---
+- hosts: "{{ module_name }}"
+  gather_facts: False
+  tasks:
+  - name: MKDIR 
+    become: true
+    file:
+      state: directory
+      dest: "/opt/static/{{ module_name }}"
+      owner: admin
+      group: admin
+      mode: 0755
+  - name: UPDATE VERSION
+    synchronize: 
+      src: "{{item.src}}" 
+      dest: "{{item.dest}}" 
+      use_ssh_args: yes
+    with_items:
+      - {src: "/home/admin/ansible/data/jpol/{{ module_name }}/", dest: "/opt/static/{{ module_name }}"}
+

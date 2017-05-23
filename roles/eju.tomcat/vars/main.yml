@@ -1,0 +1,28 @@
+---
+tomcat_supported_platforms:
+  - RedHat
+
+tomcat_supported_distributions:
+  - CentOS
+  - RedHat
+
+# filename of Tomcat redistributable package
+tomcat_filename: apache-tomcat-{{ tomcat_version }}.tar.gz
+
+# abstract Tomcat major version
+tomcat_version_major: "{{ tomcat_version|truncate(1, True, '') }}"
+
+# instances base directory
+tomcat_instance_dirs:
+  - conf
+  - logs
+  - webapps
+  - temp
+  - lib
+  - work
+
+# installation directory, denoted by environment variable CATALINA_HOME
+tomcat_env_catalina_home: "{{ tomcat_install_base }}/apache-tomcat-{{ tomcat_version }}"
+
+# gather role version for facts
+tomcat_role_version: "{{ lookup('file', role_path + '/VERSION') }}"

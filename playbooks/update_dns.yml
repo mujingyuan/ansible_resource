@@ -1,0 +1,14 @@
+---
+- hosts: "all"
+  gather_facts: False
+  user: admin
+  become: yes
+  tasks:
+  - name: cp dns
+    copy: 
+      src: /etc/resolv.conf 
+      dest: /etc/resolv.conf 
+      owner: 0
+      group: 0
+      mode: 0644
+        

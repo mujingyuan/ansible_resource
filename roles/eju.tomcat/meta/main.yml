@@ -1,0 +1,42 @@
+---
+dependencies:
+  - { role: eju.util }
+
+galaxy_info:
+  author: Mark Kusch
+  description: Manage tomcat installation
+  company: http://silpion.de
+  license: Apache 2
+  min_ansible_version: 1.9
+
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Fedora
+    versions:
+    - 20
+  - name: Ubuntu
+    versions:
+    - all
+    - lucid
+    - maverick
+    - natty
+    - oneiric
+    - precise
+    - quantal
+    - raring
+    - saucy
+    - trusty
+  - name: Debian
+    versions:
+    - all
+    - etch
+    - lenny
+    - squeeze
+    - wheezy
+
+  categories:
+  - web
+

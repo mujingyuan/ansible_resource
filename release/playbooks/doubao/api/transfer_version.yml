@@ -1,0 +1,16 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. MAKE DIR
+    file:
+      path: /home/admin/release/tmp/{{ version }}
+      group: admin
+      owner: admin
+      state: directory
+  - name: 2. DOWNLOAD VERSION
+    get_url:
+      url: "{{item.file_url}}"
+      dest: "/home/admin/release/tmp/{{ version }}/"
+      checksum: "md5:{{item.md5}}"
+    with_items: "{{ file_list }}"

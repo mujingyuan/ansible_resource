@@ -1,0 +1,31 @@
+- hosts: "{{ mongodb_master_target }}"
+  remote_user: admin
+  become: yes
+  gather_facts: yes
+  vars:
+    mongodb_master: true
+    mongodb_security_authorization: enabled
+    mongodb_net_bindip: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+    mongodb_replication_replset: "replset_{{ project }}"
+    mongodb_login_host: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+    mongodb_replication_params:
+      - host_name: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+  roles:
+    - role: eju.mongodb
+      when: "'mongodb_master' in group_names"
+
+- hosts: "{{ mongodb_replicas_target }}"
+  remote_user: admin
+  become: yes
+  gather_facts: yes
+  vars:
+    mongodb_master: false
+    mongodb_security_authorization: enabled
+    mongodb_net_bindip: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+    mongodb_replication_replset: "replset_{{ project }}"
+    mongodb_login_host: "{{ mongodb_master_target }}"
+    mongodb_replication_params:
+      - host_name: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+  roles:
+    - role: eju.mongodb
+      when: "'mongodb_replicas' in group_names"

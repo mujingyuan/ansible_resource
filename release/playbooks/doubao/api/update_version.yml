@@ -1,0 +1,7 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: update server
+    script: '{{ ansible_resource_dir }}/scripts/{{ env }}/{{ project }}/deploy.sh {{version}} {{file_name}}'
+    with_items: "{{ file_list }}"
