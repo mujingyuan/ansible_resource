@@ -26,11 +26,13 @@ tomcat_default_user_system: false
 
 # Tomcat configuration
 #   Default template for configuration file server.xml
-tomcat_default_server_xml_template: server.xml.yml
+tomcat_default_server_xml_template: server.xml.j2
 #   Default template for configuration file context.xml
-tomcat_default_context_xml_template: context.xml.yml
+tomcat_default_context_xml_template: context.xml.j2
 #   Default template for configuration file web.xml
 tomcat_default_web_xml_template: web.xml
+#   Default template for log4j.properties
+tomcat_default_log4j_properties_template: log4j.properties.j2
 #   Default shutdown port (per instance name: item.server_elements.port_shutdown)
 tomcat_default_port_shutdown: 8005
 #   Default connector port (per instance name: item.server_elements.port_connector)
@@ -42,9 +44,16 @@ tomcat_default_port_ajp: 8009
 #   Default Oracle port
 tomcat_default_port_db: 1521
 #   Default CATALINA_OPTS (per instance name: item.server_elements.catalina_opts)
-tomcat_default_catalina_opts: ''
+tomcat_default_normal_opts: "-server -Xss512k -Dsun.net.inetaddr.ttl=30"
+tomcat_default_mem_opts: "-Xmx2g -Xms2g -Xmn1g -XX:PermSize=256m -XX:MaxPermSize=256m"
+tomcat_default_gc_opts: "-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -XX:+PrintTenuringDistribution -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=68 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=7 -XX:GCLogFileSize=512M -verbose:gc"
+tomcat_default_extra_opts: ""
+tomcat_default_debug_opts: "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n"
+tomcat_default_catalina_opts: ""
 #   Default per instance path
 tomcat_default_instance_path: /opt/tomcat
+# Default log path
+tomcat_default_log_base_path: /data/logs
 #   Default per instance URI encoding
 tomcat_default_override_uri_encoding: ""
 #   Whether to prefer IPv4 over IPv6
@@ -61,10 +70,10 @@ tomcat_instances:
 
 # tomcat_instances_libs
 tomcat_instances_libs:
-  - { url: "{{ tomcat_mirror }}/lib/ojdbc14-10.2.0.2.0.jar",
+  - { url: "{{ tomcat_mirror }}/extras/ojdbc14-10.2.0.2.0.jar",
       filename: "ojdbc14-10.2.0.2.0.jar",
     }
-  - { url: "{{ tomcat_mirror }}/lib/log4j-1.2.13.jar",
+  - { url: "{{ tomcat_mirror }}/extras/log4j-1.2.13.jar",
       filename: "log4j-1.2.13.jar",
     }
 

@@ -2,6 +2,7 @@
 {% set resources = item.server_elements.resource  if item.server_elements.resource else {} -%}
 {% set executors = item.server_elements.executors if item.server_elements.executors else {} -%}
 {% set connectors = item.server_elements.connectors if item.server_elements.connectors else {} -%}
+{% set extra_classnames = item.server_elements.extra_classnames if item.server_elements.extra_classnames else {} %}
 <?xml version='1.0' encoding='utf-8'?>
 
 <!--
@@ -21,7 +22,11 @@
 {% endif %}
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
-  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+  {% if extra_classnames %}
+  {%- for classname in extra_classnames -%}
+  <Listener className="{{ classname }}" />
+  {% endfor %}
+  {% endif %}
 
   <GlobalNamingResources>
     {% if resources -%}
@@ -43,9 +48,9 @@
   <Service name="Catalina">
     {% if executors -%}
     <Executor
-    {%- for k, v in executors.iteritems() %}
+    {% for k, v in executors.iteritems() %}
                {{ k }}="{{ v }}"
-    {%- endfor -%}
+    {% endfor -%}
     />
     {% endif %}
     {%- if connectors -%}

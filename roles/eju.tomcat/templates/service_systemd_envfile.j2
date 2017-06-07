@@ -1,2 +1,7 @@
 CATALINA_BASE={{ item.path|default(tomcat_default_instance_path) }}/catalina/{{ item.name }}
-CATALINA_OPTS={{ item.catalina_opts|default(tomcat_default_catalina_opts) }}
+CATALINA_GC_OPTS={{ item.catalina_gc_opts|default(tomcat_default_gc_opts) }}
+CATALINA_NORMAL_OPTS={{ item.catalina_normal_opts|default(tomcat_default_normal_opts) }}
+CATALINA_MEM_OPTS={{ item.catalina_mem_opts|default(tomcat_default_mem_opts) }}
+CATALINA_DEBUG_OPTS={{ item.catalina_debug_opts|default(tomcat_default_debug_opts) }}
+CATALINA_EXTRA_OPTS={{ item.catalina_extra_opts|default(tomcat_default_extra_opts) }}
+CATALINA_OPTS="{{ item.catalina_opts|default(tomcat_default_catalina_opts) }}"

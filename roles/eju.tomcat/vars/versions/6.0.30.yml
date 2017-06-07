@@ -1,0 +1,4 @@
+---
+# SHA1 sum for the Tomcat redistributable package
+tomcat_checksum: "sha1:5e4905dd59cbdbc17d55ef533e9a3a0355a638bb"
+tomcat_web_xml_schema_version: 2.5

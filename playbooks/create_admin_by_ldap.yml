@@ -1,7 +1,7 @@
 ---
 - hosts: "{{ targets }}"
   gather_facts: False
-  remote_user: admin
+  remote_user: mujingyuan
   become: true
   tasks:
   - name: mkdir dir

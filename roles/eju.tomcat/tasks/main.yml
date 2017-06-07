@@ -77,6 +77,27 @@
     filename: "{{ item.filename }}"
   with_items: "{{ tomcat_instances_libs }}"
 
+- name: download tomcat extra bins
+  tags: tomcat
+  when:
+    - tomcat_instances_extra_bins is defined
+    - tomcat_fact_is_not_initial_check_mode
+  include: "{{ tomcat_path_to_lib_role }}/eju.lib/tasks/get_url.yml"
+  vars:
+    url: "{{ item.url }}"
+    filename: "{{ item.filename }}"
+  with_items: "{{ tomcat_instances_extra_bins }}"
+
+- name: copy tomcat extra bins
+  tags: tomcat
+  when:
+    - tomcat_instances_extra_bins is defined
+    - tomcat_fact_is_not_initial_check_mode
+  include: "{{ tomcat_path_to_lib_role }}/eju.lib/tasks/copy.yml"
+  vars:
+    filename: "{{ item.filename }}"
+  with_items: "{{ tomcat_instances_extra_bins }}"
+
 - name: Install catalina home directory
   tags: tomcat
   become: true
@@ -97,7 +118,6 @@
   args:
     creates: "{{ tomcat_env_catalina_home }}/lib"
 
-
 - name: Install instance directories
   tags: tomcat
   become: true
@@ -107,6 +127,19 @@
   file:
     state: directory
     dest: "{{ item.0.path|default(tomcat_default_instance_path) }}/{{ item.0.name }}/{{ item.1 }}"
+    owner: "{{ item.0.user|default(tomcat_default_user_name) }}"
+    group: "{{ item.0.group|default(tomcat_default_user_group) }}"
+    mode: 0755
+
+- name: Install instance log directories
+  tags: tomcat
+  become: true
+  with_nested:
+    - "{{ tomcat_instances }}"
+    - "{{ tomcat_instance_log_dirs }}"
+  file:
+    state: directory
+    dest: "{{ item.0.log_base_path|default(tomcat_default_log_base_path) }}/{{ item.0.name }}/{{ item.1 }}"
     owner: "{{ item.0.user|default(tomcat_default_user_name) }}"
     group: "{{ item.0.group|default(tomcat_default_user_group) }}"
     mode: 0755
@@ -123,6 +156,7 @@
       --ignore=web.xml
       --ignore=server.xml
       --ignore=context.xml
+      --ignore=logging.properties
       {{ tomcat_env_catalina_home }}/conf
 
 - name: Install static/unmanaged conf files
@@ -178,6 +212,19 @@
     group: "{{ item.group|default(tomcat_default_user_group) }}"
     mode: 0640
 
+- name: Install instance log4j properties
+  tags: tomcat
+  register: tomcat_registered_install_log4j_properties
+  with_items: "{{ tomcat_instances }}"
+  vars:
+    log_base_path: "{{ item.log_base_path|default(tomcat_default_log_base_path) }}"
+  template:
+    src: "{{ item.log4j_properties_template|default(tomcat_default_log4j_properties_template) }}"
+    dest: "{{ item.path|default(tomcat_default_instance_path) }}/{{ item.name }}/lib/log4j.properties"
+    owner: "{{ item.user|default(tomcat_default_user_name) }}"
+    group: "{{ item.group|default(tomcat_default_user_group) }}"
+    mode: 0640
+
 - name: Install tomcat libs
   tags: tomcat
   copy:
@@ -187,6 +234,17 @@
   with_nested:
     - "{{ tomcat_instances }}"
     - "{{ tomcat_instances_libs }}"
+
+- name: replace tomcat bins with extra bins
+  tags: tomcat
+  become: true
+  become_user: root
+  when: tomcat_instances_extra_bins is defined
+  copy:
+    src: "{{ lib_persistent_data_path_remote }}/{{item.filename}}"
+    dest: "{{ tomcat_env_catalina_home }}/bin/{{item.filename}}"
+    remote_src: true
+  with_items: "{{ tomcat_instances_extra_bins }}"
 
 #   systemd requires to use separate environment files per instance
 - name: Install instance environment files

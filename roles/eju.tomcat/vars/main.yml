@@ -14,12 +14,18 @@ tomcat_version_major: "{{ tomcat_version|truncate(1, True, '') }}"
 
 # instances base directory
 tomcat_instance_dirs:
+  - bin
   - conf
   - logs
   - webapps
   - temp
   - lib
   - work
+
+# instances log directory
+tomcat_instance_log_dirs:
+  - dump
+  - gc
 
 # installation directory, denoted by environment variable CATALINA_HOME
 tomcat_env_catalina_home: "{{ tomcat_install_base }}/apache-tomcat-{{ tomcat_version }}"
