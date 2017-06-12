@@ -1,6 +1,6 @@
 ---
 ## Installation options
-redis_version: 3.2.8
+redis_version: "stable"
 redis_install_dir: /opt/app/redis
 redis_config_dir: "{{ redis_install_dir }}/conf"
 redis_log_dir: "{{ redis_install_dir }}/log"

@@ -7,7 +7,7 @@ java_supported_platform:
   - RedHat
 
 # Where to download Oracle Java implementation from
-java_oracle_mirror_base: 'http://10.106.71.4/java'
+java_oracle_mirror_base: 'http://mirrors.ejuops.com/softwares/java'
 java_oracle_mirror: "{{ java_oracle_mirror_base }}/jdk"
 
 

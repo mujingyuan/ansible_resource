@@ -54,7 +54,7 @@
                 type: org.apache.activemq.ActiveMQConnectionFactory
                 description: JMS Connection Factory
                 factory: org.apache.activemq.jndi.JNDIReferenceFactory
-                brokerURL: failover:(tcp://10.120.142.205:61616,tcp://10.120.142.206:61616)?jms.useAsyncSend=true
+                brokerURL: failover:(tcp://10.106.142.205:61616,tcp://10.106.142.206:61616)?jms.useAsyncSend=true
                 userName: fjsadmin
                 password: Fjs@201702
               element_3:

@@ -86,6 +86,10 @@ G5_kabinin
 G4_consolein
 G5_consolein
 
+[clearingin:children]
+G4_clearingin
+G5_clearingin
+
 [nginx:children]
 G4_nginx
 G5_nginx
@@ -101,6 +105,13 @@ G5_cashierh5
 [posh5:children]
 G4_posh5
 G5_posh5
+
+[redis:children]
+redis_master
+redis_slave
+
+[activemq:children]
+activemq_master
 
 [G4_pointin]
 10.106.130.36
@@ -148,8 +159,6 @@ G5_posh5
 10.106.130.57
 [G4_clearingin]
 10.106.130.59
-[G4_clearingin]
-10.106.130.60
 [G4_nginx]
 10.106.130.61
 [G4_dashboard]
@@ -204,6 +213,8 @@ G5_posh5
 10.106.130.24
 [G5_consolein]
 10.106.130.26
+[G5_clearingin]
+10.106.130.60
 [G5_nginx]
 10.106.130.27
 [G5_dashboard]
@@ -212,3 +223,11 @@ G5_posh5
 10.106.130.29
 [G5_posh5]
 10.106.130.30
+
+[redis_master]
+10.106.130.34
+[redis_slave]
+10.106.130.35
+
+[activemq_master]
+10.106.130.33

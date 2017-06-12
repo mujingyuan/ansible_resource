@@ -4,7 +4,7 @@
 # This file is rendered by Ansible.
 -->
 
-<Context>
+<Context swallowOutput="true">
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     {% if item.context_elements -%}
     {% for element_type, elements in item.context_elements.iteritems() -%}

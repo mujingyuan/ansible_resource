@@ -1,0 +1,5 @@
+{
+  "redis_version": "3.2.1",
+  "redis_port": 6379,
+  "redis_slaveof": "10.106.130.34 6379"
+}

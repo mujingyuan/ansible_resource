@@ -1,5 +1,6 @@
 ---
 - name: enable overcommit in sysctl
+  become: yes
   sysctl:
     name: vm.overcommit_memory
     value: 1

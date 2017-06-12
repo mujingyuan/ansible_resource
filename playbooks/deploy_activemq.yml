@@ -2,4 +2,5 @@
 - hosts: "{{ targets }}"
   remote_user: admin
   roles:
-    - role: eju.redis
+    - eju.java
+    - eju.activemq

@@ -1,0 +1,4 @@
+{
+  "redis_version": "3.2.1",
+  "redis_port": 6379,
+}
