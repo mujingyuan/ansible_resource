@@ -25,8 +25,8 @@
   "tomcat_instances":
   [
     {
-      "name": "accessout",
-      "service_name": "tomcat@accessout",
+      "name": "clearingin",
+      "service_name": "tomcat@clearingin",
       "catalina_normal_opts": "-server -Xss512k -Dsun.net.inetaddr.ttl=30",
       "catalina_mem_opts": "-Xmx4g -Xms4g -Xmn2g -XX:PermSize=256m -XX:MaxPermSize=256m",
       "catalina_gc_opts": "-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -XX:+PrintTenuringDistribution -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=68 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=7 -XX:GCLogFileSize=512M -verbose:gc",

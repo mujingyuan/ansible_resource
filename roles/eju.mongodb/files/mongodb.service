@@ -4,8 +4,8 @@ After=network.target
 Documentation=https://docs.mongodb.org/manual
 
 [Service]
-User="{{ mongodb_user }}"
-Group="{{ mongodb_user }}"
+User={{ mongodb_user }}
+Group={{ mongodb_user }}
 Environment="OPTIONS=--quiet -f /etc/mongod.conf"
 ExecStart=/usr/bin/mongod $OPTIONS run
 ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb

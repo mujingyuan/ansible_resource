@@ -11,10 +11,10 @@ mongodb_force_wait_for_port: false
 mongodb_user_update_password: "on_create"        # MongoDB user password update default policy
 mongodb_manage_service: true
 
-mongodb_user: mongod
+mongodb_user: admin
 mongodb_uid:
 mongodb_gid:
-mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
+mongodb_daemon_name: "{{ 'mongodb' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
 
 ## net Options
 mongodb_net_bindip: 127.0.0.1                    # Comma separated list of ip addresses to listen on

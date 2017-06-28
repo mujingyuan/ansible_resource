@@ -9,7 +9,6 @@
       description: MongoDB Repository
       baseurl: "{{ mongodb_repo_baseurl }}"
       gpgcheck: "{{ mongodb_repo_gpgcheck }}"
-      gpgkey: "{{ mongodb_repo_gpgkey }}"
 
 
 - name: RedHat | Install dependencies packages

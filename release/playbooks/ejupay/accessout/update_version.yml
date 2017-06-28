@@ -1,0 +1,17 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 1. STOP SERVICE
+    become: true
+    service:
+      name: "tomcat@{{module}}"
+      state: stopped
+  - name: 2. RUN UPDATE SCRIPT
+    script: '{{ ansible_resource_dir }}/scripts/{{project}}/tomcat_update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
+  - name: 3. START SERVICE
+    become: true
+    service:
+      name: "tomcat@{{module}}"
+      state: started
+
