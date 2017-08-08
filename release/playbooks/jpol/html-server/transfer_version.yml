@@ -2,7 +2,9 @@
 - hosts: "{{host}}"
   gather_facts: False
   tasks:
-  - name: 1. CLEAN DIR
+  - name: 0. REMOVE DIR
+    become: yes
+    become_user: admin
     file:
       path: /home/admin/publish/{{project}}/{{module}}/{{ item.sub_dir }}
       group: admin
@@ -10,23 +12,36 @@
       state: absent
     with_items:
       - {sub_dir: "lastest"}
-  - name: 2. MAKE DIR
+  - name: 1. MAKE DIR
+    become: yes
+    become_user: admin
     file:
       path: /home/admin/publish/{{project}}/{{module}}/{{ item.sub_dir }}
       group: admin
       owner: admin
-      state: directory 
+      state: directory
+      recurse: yes
     with_items:
       - {sub_dir: "lastest"}
   - name: 2. DOWNLOAD VERSION
-    get_url: 
-      url: "{{item.file_url}}" 
-      dest: "/home/admin/publish/{{project}}/{{module}}/{{item.file_name}}" 
+    become: yes
+    become_user: admin
+    get_url:
+      url: "{{item.file_url}}"
+      dest: "/home/admin/publish/{{project}}/{{module}}/{{item.file_name}}"
       checksum: "md5:{{item.md5}}"
+      owner: admin
+      group: admin
+      force: no
     with_items: "{{ file_list }}"
-  - name: 3. UNARCHIVE FILE
+  - name: 3. UNARCHIVE VERSION
+    become: yes
+    become_user: admin
     unarchive:
       src: "/home/admin/publish/{{project}}/{{module}}/{{item.file_name}}"
-      dest: "/home/admin/publish/{{project}}/{{module}}/lastest"
-      remote_src: True
+      dest: "/home/admin/publish/{{project}}/{{module}}/lastest/"
+      owner: admin
+      group: admin
+      remote_src: yes
     with_items: "{{ file_list }}"
+

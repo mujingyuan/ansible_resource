@@ -2,10 +2,17 @@
 - hosts: "{{host}}"
   gather_facts: False
   tasks:
-  - name: 1. RUN UPDATE SCRIPT
-    script: '{{ ansible_resource_dir }}/scripts/{{project}}/node_update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
-  - name: 2. RESTART SERVICE
-    shell: |
-        npm run deploy -- {{ module }}
-    args:
-        chdir: "/opt/node/{{ module }}"
+  - name: 1. STOP SERVICE
+    become: yes
+    service:
+      name: pm2-admin
+      state: stopped
+  - name: 2. RUN UPDATE SCRIPT
+    become: yes
+    become_user: admin
+    script: "{{ ansible_resource_dir }}/scripts/{{project}}/node_update.sh {{env}} {{project}} {{module}} {{version}} {{build}}"
+  - name: 3. START SERVICE
+    become: yes
+    service:
+      name: pm2-admin
+      state: started

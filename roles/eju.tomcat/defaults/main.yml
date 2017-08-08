@@ -4,7 +4,7 @@ tomcat_default_version: '6.0.48'
 tomcat_version: "{{ ansible_local['tomcat']['general']['version'] if ansible_local['tomcat'] is defined else tomcat_default_version }}"
 
 # Mirror where to dowload Tomcat redistributable package from
-tomcat_mirror: http://mirrors.ejuops.com/softwares/tomcat
+tomcat_mirror: http://yum.ejuops.com/softwares/tomcat
 # Allow to override where to download Tomcat from
 tomcat_download_url: "{{ tomcat_mirror }}/{{ tomcat_filename }}"
 

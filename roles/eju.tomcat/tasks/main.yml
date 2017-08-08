@@ -15,13 +15,17 @@
   include: "{{ tomcat_path_to_lib_role }}/eju.lib/tasks/checkmodedetection.yml"
 
 - name: Detect --check mode on initial run
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   set_fact:
     tomcat_fact_is_not_initial_check_mode: "{{ true if ((ansible_local|default({})).tomcat is defined or not lib_fact_check_mode) else false }}"
 
 
 - name: Include version specific configuration
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   include: "{{ tomcat_path_to_lib_role }}/eju.lib/tasks/version-specific-vars.yml"
   vars:
     version: "{{ tomcat_version }}"
@@ -145,9 +149,9 @@
     mode: 0755
 
 - name: Register static/unmanaged conf files
-  tags: tomcat
   register: tomcat_registered_conf_files
   check_mode: no
+  tags: tomcat
   changed_when: false
   when: tomcat_fact_is_not_initial_check_mode
 #  failed_when: "{{ false if lib_fact_check_mode else omit }}"
@@ -161,6 +165,7 @@
 
 - name: Install static/unmanaged conf files
   tags: tomcat
+  register: tomcat_registered_conf_files
   become: true
   with_nested:
     - "{{ tomcat_instances }}"
@@ -177,7 +182,9 @@
 
 
 - name: Install instance server.xml
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   become: true
   with_items: "{{ tomcat_instances }}"
   register: tomcat_registered_install_server_xml
@@ -189,7 +196,9 @@
     mode: 0640
 
 - name: Install instance context.xml
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   become: true
   with_items: "{{ tomcat_instances }}"
   register: tomcat_registered_install_context_xml
@@ -201,7 +210,9 @@
     mode: 0640
 
 - name: Install instance web.xml
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   become: true
   with_items: "{{ tomcat_instances }}"
   register: tomcat_registered_install_web_xml
@@ -213,7 +224,9 @@
     mode: 0640
 
 - name: Install instance log4j properties
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   register: tomcat_registered_install_log4j_properties
   with_items: "{{ tomcat_instances }}"
   vars:
@@ -248,7 +261,9 @@
 
 #   systemd requires to use separate environment files per instance
 - name: Install instance environment files
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   become: true
   when:
     - ansible_local.util.init.system is defined
@@ -274,7 +289,9 @@
 #   install a service file for tomcat
 #     systemd by default uses a templated service (one unit, many instances)
 - name: Install tomcat services
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   become: true
   with_items: "{{ tomcat_instances }}"
   register: tomcat_registered_install_tomcat_service
@@ -289,7 +306,9 @@
 #   reload systemd if service file(s) have changed
 #     suppress warnings from systemd
 - name: Reload systemd
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   when:
     - tomcat_registered_install_tomcat_service.changed
     - ansible_local.util.init.system is defined
@@ -322,7 +341,9 @@
 #       - tomcat service name in question (item.service_name) with sensible default
 #       - None
 - name: Register instances requiring restart
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   register: tomcat_registered_instances_requiring_restart
   with_items:
     - "{{ (tomcat_registered_install_server_xml|default({})).results|default({}) }}"
@@ -337,14 +358,18 @@
 #     This one maps all services in question from previous task into an iterable list
 #       while stripping services named 'None'
 - name: Configure instances requiring restart
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   when: tomcat_fact_is_not_initial_check_mode
   set_fact:
     tomcat_facts_requires_restart: "{{ tomcat_registered_instances_requiring_restart.results|map(attribute='ansible_facts.tomcat_fact_requires_restart_item')|list|unique|difference(['None']) }}"
 #     We can now safely notify the service restart handler which in turn just loops
 #       over all items in the resulting list 'tomcat_facts_requires_restart'.
 - name: Trigger service handler
-  tags: tomcat
+  tags:
+    - tomcat
+    - configuration
   notify: "restart-tomcat"
   command: /bin/true
 

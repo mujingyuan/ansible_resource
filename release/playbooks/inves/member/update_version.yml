@@ -1,0 +1,58 @@
+---
+- hosts: "{{host}}"
+  gather_facts: False
+  tasks:
+  - name: 0. MAKE DIR
+    become: yes
+    file:
+      path: /home/admin/publish/{{project}}/{{module}}/{{ item.sub_dir }}
+      group: admin
+      owner: admin
+      state: absent
+    with_items:
+      - {sub_dir: "lastest"}
+  - name: 1. MAKE DIR
+    become: yes
+    file:
+      path: /home/admin/publish/{{project}}/{{module}}/{{ item.sub_dir }}
+      group: admin
+      owner: admin
+      state: directory
+      recurse: yes
+    with_items:
+      - {sub_dir: "lastest"}
+  - name: 2. DOWNLOAD VERSION
+    become: yes
+    get_url:
+      url: "{{item.file_url}}"
+      dest: "/home/admin/publish/{{project}}/{{module}}/{{item.file_name}}"
+      checksum: "md5:{{item.md5}}"
+      owner: admin
+      group: admin
+      force: no
+    with_items: "{{ file_list }}"
+  - name: 3. UNARCHIVE VERSION
+    become: yes
+    unarchive:
+      src: "/home/admin/publish/{{project}}/{{module}}/{{item.file_name}}"
+      dest: "/home/admin/publish/{{project}}/{{module}}/lastest/"
+      owner: admin
+      group: admin
+      force: no
+      remote_src: yes
+    with_items: "{{ file_list }}"
+  - name: 1. STOP SERVICE
+    become: true
+    service:
+      name: "{{ project }}@{{module}}"
+      state: stopped
+  - name: 2. RUN UPDATE SCRIPT
+    become: true
+    become_user: admin
+    script: '{{ ansible_resource_dir }}/scripts/{{project}}/tomcat_update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
+  - name: 3. START SERVICE
+    become: true
+    service:
+      name: "{{ project }}@{{module}}"
+      state: started
+

@@ -47,6 +47,7 @@
       state: stopped
   - name: 5. RUN UPDATE SCRIPT
     become: yes
+    become_user: admin
     script: '{{ ansible_resource_dir }}/scripts/{{project}}/{{module}}/update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
   - name: 6. START SERVICE
     become: yes

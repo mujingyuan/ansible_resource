@@ -3,5 +3,7 @@
   gather_facts: False
   tasks:
   - name: 1. RUN UPDATE SCRIPT
-    script: '{{ ansible_resource_dir }}/scripts/{{project}}/{{module}}/update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
+    become: yes
+    become_user: admin
+    script: '{{ ansible_resource_dir }}/scripts/{{project}}/static_update.sh {{env}} {{project}} {{module}} {{version}} {{build}}'
 

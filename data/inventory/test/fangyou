@@ -1,0 +1,12 @@
+[fangyourpt:children]
+G1_fangyourpt
+G2_fangyourpt
+[G1_fangyourpt]
+10.99.70.31
+[G2_fangyourpt]
+10.99.70.28
+
+[opweb:children]
+G1_opweb
+[G1_opweb]
+10.99.70.28

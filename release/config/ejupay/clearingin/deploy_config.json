@@ -82,7 +82,7 @@
             "type": "org.apache.activemq.ActiveMQConnectionFactory",
             "description": "JMS Connection Factory",
             "factory": "org.apache.activemq.jndi.JNDIReferenceFactory",
-            "brokerURL": "failover:(tcp://10.106.130.33:61616?soTimeout=2000)?jms.useAsyncSend=true",
+            "brokerURL": "failover:(tcp://10.20.1.6:61616?soTimeout=2000)?jms.useAsyncSend=true",
             "userName": "admin",
             "password": "admin@eju"
           },
@@ -105,17 +105,17 @@
           "element_4": {
             "name": "jms/topic/jmsproxy_successIncomeOrder",
             "auth": "Container",
-            "type": "org.apache.activemq.command.ActiveMQTopic",
+            "type": "org.apache.activemq.command.ActiveMQQueue",
             "description": "My Queue",
             "factory": "org.apache.activemq.jndi.JNDIReferenceFactory",
-            "physicalName": "jmsproxy_successIncomeOrder_inte"
+            "physicalName": "Consumer.Clearing.VirtualTopic.SuccessIncomeOrder"
           },
           "element_5": {
             "name": "jdbc/ds_clearing",
             "auth": "Container",
             "type": "javax.sql.DataSource",
             "driverClassName": "oracle.jdbc.OracleDriver",
-            "url": "jdbc:oracle:thin:@//10.106.131.1:1521/tradedb",
+            "url": "jdbc:oracle:thin:@//10.20.1.11:1521/tradedb",
             "username": "clearinguser",
             "password": "YIUJN4LLXY6LRK10T0OT",
             "initialSize": 20,
@@ -136,7 +136,7 @@
             "auth": "Container",
             "type": "javax.sql.DataSource",
             "driverClassName": "oracle.jdbc.OracleDriver",
-            "url": "jdbc:oracle:thin:@//10.106.131.1:1521/std",
+            "url": "jdbc:oracle:thin:@//10.20.1.12:1521/std",
             "username": "clearinguser",
             "password": "YIUJN4LLXY6LRK10T0OT",
             "initialSize": 20,

@@ -10,10 +10,4 @@
       state: directory 
     with_items:
       - {sub_dir: "lastest"}
-  - name: 2. DOWNLOAD VERSION
-    get_url: 
-      url: "{{item.file_url}}" 
-      dest: "/home/admin/publish/{{project}}/{{module}}/lastest/{{item.file_name}}" 
-      checksum: "md5:{{item.md5}}"
-    with_items: "{{ file_list }}"
 
