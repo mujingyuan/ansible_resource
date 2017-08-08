@@ -1,0 +1,149 @@
+---
+
+- name: "determin if to use systemd or not (for centos 6 support)"
+  stat:
+    path: /etc/systemd
+  register: systemd
+
+- debug: var=systemd.stat
+
+- name: "set fact if systemd is avail"
+  set_fact:
+    amq_systemd: true
+  when: systemd.stat.exists
+
+- name: "Add Activemq group"
+  become: yes
+  group:
+    name: "{{ amq_group }}"
+  tags:
+    - init
+    - group
+
+- name: "Add Activemq user"
+  become: yes
+  user:
+    name: "{{ amq_user }}"
+    group: "{{ amq_group }}"
+    home: "{{ amq_home_dir }}"
+    comment: "ActiveMQ service account"
+    createhome: no
+    state: present
+    system: yes
+  tags:
+    - init
+    - user
+
+- name: "Create requires directories [home/log etc etc]"
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ amq_user }}"
+    group: "{{ amq_group }}"
+  with_items:
+  - "{{ amq_home_dir }}"
+  - "{{ amq_log_dir }}"
+  - "{{ amq_install_dir }}"
+
+#- block:
+# - name: "set amq_checksum fact"
+#   set_fact:
+#    amq_checksum:  "{{ item.checksum }}"
+#   when: item.version == amq_version
+#   with_items: "{{ amq_checksums }}"
+#   tags:
+#     - getbin
+
+# - name: "Get tarball [ Validating md5 Checksum ]"
+#   get_url: url={{ amq_url }} dest=/tmp/apache-activemq-{{ amq_version }}-bin.tar.gz checksum={{ amq_checksum }}
+#   when: amq_skip_checksum == false and amq_checksum is defined
+#   tags: 
+#     - getbin
+
+- name: "Get tarball"
+  become: yes
+  get_url:
+    url: "{{ amq_url }}"
+    dest: "/tmp/apache-activemq-{{ amq_version }}-bin.tar.gz"
+    owner: "{{ amq_user }}"
+    group: "{{ amq_group }}"
+  when: amq_skip_checksum
+  #and amq_checksum is not defined
+  tags:
+    - getbin
+
+- name: "Extract tarball" # see: https://github.com/ansible/ansible/issues/16078
+# bug in snsible >= 2.1.0.0
+  become: yes
+  unarchive:
+    src=/tmp/apache-activemq-{{ amq_version }}-bin.tar.gz
+    dest="{{ amq_install_dir}}"
+    list_files=true
+    copy=no
+    owner={{ amq_user }}
+    group={{ amq_group }}
+
+# when we upgrade activemq we might want to keep the older versions copy for just in case ...
+- name: "Create link activemq to /opt/app/activemq"
+  become: yes
+  file: src="{{ amq_install_dir }}/apache-activemq-{{ amq_version }}"
+        dest="{{ amq_install_dir }}/activemq"
+        state=link
+        owner="{{ amq_user }}"
+        group="{{ amq_group }}"
+        #force=true
+  tags:
+    - link
+
+- name: "Create init sctipt link file"
+  become: yes
+  file:
+    src: "{{ amq_install_dir }}/activemq/bin/linux-x86-{{ ansible_userspace_bits }}/activemq"
+    dest: "/etc/init.d/activemq"
+    owner: root
+    group: root
+    state: link
+  when: amq_systemd is not defined
+
+- name: "Create init sctipt link file"
+  become: yes
+  file:
+    src: "{{ amq_install_dir }}/activemq/bin/linux-x86-{{ ansible_userspace_bits }}/activemq"
+    dest: "/etc/init.d/activemq"
+    owner: root
+    group: root
+    state: link
+  when: amq_systemd is not defined
+
+- name: "Generate empty log file ..."
+  become: yes
+  file:
+    path: "{{ amq_log_dir }}"
+    state: touch
+    mode: "u=rw,g=r,o=r"
+    owner: root
+    group: root
+
+- name: "Generate /etc/sysconfig/activemq Redhat"
+  become: yes
+  template:
+    src: sysconfig_activemq.j2
+    dest: /etc/sysconfig/activemq
+    owner: root
+    group: root
+    mode: 0755
+
+- name: "Generate systemd service file"
+  become: yes
+  template:
+    src: activemq.service.j2
+    dest: /etc/systemd/system/activemq.service
+    owner: root
+    group: root
+  when: amq_systemd is defined
+
+- name: start service
+  become: yes
+  service: name=activemq enabled=yes state=started

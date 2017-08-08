@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: "Haggai Philip Zagury"
+  description: "Installs Activemq"
+  company: "Tikal Knoeldge LTD"
+  license: "license (GPLv3)"
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: Ubuntu
+      versions:
+        - trusty
+        - utopic
+  galaxy_tags:
+    - message:queues
+    - messaging
+dependencies: []

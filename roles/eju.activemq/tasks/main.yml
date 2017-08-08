@@ -1,0 +1,12 @@
+---
+# tasks file for activemq-ansible-role
+#
+
+- include: "{{ amq_install_mode }}.yml"
+  when: amq_install_mode is defined and amq_install_mode == "tarball"
+
+- include: "{{ ansible_pkg_mgr }}.yml"
+  when: amq_install_mode is defined and amq_install_mode == "package" and ( ansible_pkg_mgr == "apt" or ansible_pkg_mgr == "yum" )
+
+- debug: msg="amq_install_mode is not defined - doing nothing ..."
+  when: amq_install_mode is not defined

@@ -1,0 +1,6 @@
+---
+- hosts: {{ targets }}
+  remote_user: admin
+  roles:
+    - eju.java
+    - eju.activemq
