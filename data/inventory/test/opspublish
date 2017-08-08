@@ -1,7 +1,0 @@
-[opspublish:children]
-G1_opspublish
-G2_opspublish
-[G1_opspublish]
-10.120.132.47
-[G2_opspublish]
-10.120.71.22  ansible_user=root ansible_ssh_pass=MTQ1Y2E4YTExOWM3NDdkMWY4ZmUyYjE5
